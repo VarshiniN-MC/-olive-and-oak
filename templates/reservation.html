@@ -1,43 +1,95 @@
 
 {% extends "base.html" %}
-{% block title %}Table Reservation{% endblock %}
-{% block content %}
-<h1>Reserve a Table</h1>
 
-<section>
+{% block title %}Reserve a Table | Olive & Oak{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <p class="eyebrow">YOUR NEXT DINING EXPERIENCE</p>
+    <h1>Reserve a Table</h1>
+    <p class="muted">Choose a restaurant, date, time and number of guests.</p>
+</div>
+
+<section class="reservation-panel">
+
     <form action="{{ url_for('check_reservation') }}" method="POST">
+
         <label for="restaurant_id">Select Restaurant:</label>
         <select name="restaurant_id" id="restaurant_id" required>
-            <option value="urban-spice" {% if selected_restaurant == 'urban-spice' %}selected{% endif %}>Urban Spice</option>
-            <option value="pizza-corner" {% if selected_restaurant == 'pizza-corner' %}selected{% endif %}>Pizza Corner</option>
-            <option value="burger-house" {% if selected_restaurant == 'burger-house' %}selected{% endif %}>Burger House</option>
+            <option value="">Choose a restaurant</option>
+
+            {% for restaurant_id, restaurant in restaurants.items() %}
+                <option value="{{ restaurant_id }}"
+                    {% if selected_restaurant is defined and selected_restaurant == restaurant_id %}
+                        selected
+                    {% elif pending_reservation is defined and pending_reservation.restaurant_id == restaurant_id %}
+                        selected
+                    {% endif %}>
+                    {{ restaurant.name }}
+                </option>
+            {% endfor %}
         </select>
 
         <label for="reservation_date">Reservation Date:</label>
-        <input type="date" name="reservation_date" id="reservation_date" value="{{ reservation_date or '' }}" required>
+        <input
+            type="date"
+            name="reservation_date"
+            id="reservation_date"
+            value="{{ reservation_date|default(pending_reservation.reservation_date if pending_reservation is defined else '') }}"
+            min="{{ today }}"
+            required
+        >
 
         <label for="reservation_time">Reservation Time:</label>
-        <input type="time" name="reservation_time" id="reservation_time" value="{{ reservation_time or '' }}" required>
+        <input
+            type="time"
+            name="reservation_time"
+            id="reservation_time"
+            value="{{ reservation_time|default(pending_reservation.reservation_time if pending_reservation is defined else '') }}"
+            required
+        >
 
         <label for="guests">Number of Guests:</label>
-        <input type="number" name="guests" id="guests" min="1" value="{{ guests or '' }}" required>
+        <input
+            type="number"
+            name="guests"
+            id="guests"
+            min="1"
+            max="20"
+            value="{{ guests|default(pending_reservation.guests if pending_reservation is defined else '') }}"
+            required
+        >
 
         <button type="submit">Check Availability</button>
+
     </form>
 
-    {% if available and pending_reservation %}
-        <p class="success">A suitable table is available!</p>
-        <p>Restaurant: {{ pending_reservation.restaurant_name }}</p>
-        <p>Table: {{ pending_reservation.table_id }}</p>
-        <p>Capacity: {{ pending_reservation.capacity }}</p>
+    {% if available and pending_reservation is defined %}
+
+        <div class="success">
+            <h2>A suitable table is available!</h2>
+            <p><strong>Restaurant:</strong> {{ pending_reservation.restaurant_name }}</p>
+            <p><strong>Date:</strong> {{ pending_reservation.reservation_date }}</p>
+            <p><strong>Time:</strong> {{ pending_reservation.reservation_time }}</p>
+            <p><strong>Guests:</strong> {{ pending_reservation.guests }}</p>
+            <p><strong>Table:</strong> {{ pending_reservation.table_id }}</p>
+            <p><strong>Table Capacity:</strong> {{ pending_reservation.capacity }}</p>
+        </div>
 
         <form action="{{ url_for('confirm_reservation') }}" method="POST">
             <button type="submit">Confirm Reservation</button>
         </form>
+
     {% endif %}
 
     {% if unavailable %}
-        <p class="error">No suitable table is available for this date and time. Please try another slot.</p>
+        <p class="error">
+            No suitable table is available for this date and time.
+            Please choose another slot.
+        </p>
     {% endif %}
+
 </section>
+
 {% endblock %}
