@@ -1271,6 +1271,9 @@ def clear_cart():
     return redirect(url_for("view_cart"))
 
 
+#Initialize database when the application starts
+initialize_database()
+
 if __name__ == "__main__":
-    initialize_database()
     app.run(debug=True)
+
