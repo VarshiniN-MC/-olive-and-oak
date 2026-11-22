@@ -1,0 +1,62 @@
+
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<section>
+    <h1>Checkout</h1>
+    <h2>{{ restaurant_name }}</h2>
+
+    {% for item in cart %}
+        <p>{{ item.name }} × {{ item.quantity }} — ₹{{ item.price * item.quantity }}</p>
+    {% endfor %}
+
+    <h3>Subtotal: ₹{{ total }}</h3>
+
+    <form action="{{ url_for('apply_offer') }}" method="POST">
+        <label>Offer Code</label>
+        <input type="text" name="offer_code" value="{{ offer_code }}" placeholder="WELCOME10 or FLAT50">
+        <button type="submit">Apply Offer</button>
+    </form>
+
+    <h3>Discount: ₹{{ discount }}</h3>
+    <h2>Final Total: ₹{{ final_total }}</h2>
+
+    <h3>Available Offers</h3>
+    {% for code, offer in offers.items() %}
+        <p><strong>{{ code }}</strong> — {{ offer.description }}</p>
+    {% endfor %}
+
+    <form action="{{ url_for('checkout') }}" method="POST">
+        <label>Select Service</label>
+        <select name="service_type" id="service_type" required onchange="toggleAddress()">
+            <option value="">Choose a service</option>
+            <option value="Dine-in" {% if selected_service == 'Dine-in' %}selected{% endif %}>Dine-in</option>
+            <option value="Takeaway / Pickup" {% if selected_service == 'Takeaway / Pickup' %}selected{% endif %}>Takeaway / Pickup</option>
+            <option value="Home Delivery" {% if selected_service == 'Home Delivery' %}selected{% endif %}>Home Delivery</option>
+        </select>
+
+        <div id="address-section">
+            <label>Delivery Address (required for delivery)</label>
+            <textarea name="delivery_address" placeholder="Enter complete delivery address"></textarea>
+        </div>
+
+        <button type="submit">Save Service Selection</button>
+    </form>
+
+    {% if selected_service %}
+        <p>Selected service: {{ selected_service }}</p>
+        <a href="{{ url_for('payment') }}" class="button">Proceed to Payment</a>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleAddress() {
+    const service = document.getElementById("service_type").value;
+    document.getElementById("address-section").style.display =
+        service === "Home Delivery" ? "block" : "none";
+}
+toggleAddress();
+</script>
+{% endblock %}

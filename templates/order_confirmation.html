@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+{% block title %}Order Confirmation{% endblock %}
+{% block content %}
+<section>
+    <h1>Order Confirmed!</h1>
+
+    <p class="success">Your order has been placed successfully.</p>
+
+    <p><strong>Order ID:</strong> {{ order['order_id'] }}</p>
+    <p><strong>Restaurant:</strong> {{ order['restaurant_name'] }}</p>
+    <p><strong>Service:</strong> {{ order['service_type'] }}</p>
+    <p><strong>Payment Status:</strong> {{ order['payment_status'] }}</p>
+
+    <h2>Ordered Items</h2>
+
+    {% for item in order['items'] %}
+        <p>
+            {{ item['item_name'] }} × {{ item['quantity'] }}
+            — ₹{{ item['price'] * item['quantity'] }}
+        </p>
+    {% endfor %}
+
+    <h2>Total: ₹{{ order['total'] }}</h2>
+
+    <a href="{{ url_for('restaurant_list') }}" class="button">Order Again</a>
+    <a href="{{ url_for('order_history') }}" class="button">View Order History</a>
+</section>
+{% endblock %}

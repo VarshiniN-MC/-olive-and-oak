@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+{% block title %}Customer Reviews{% endblock %}
+{% block content %}
+<section>
+    <h1>Customer Reviews</h1>
+
+    {% if reviews %}
+        {% for review in reviews %}
+            <div class="restaurant-card">
+                <h3>{{ review.name or "Customer" }}</h3>
+                <p><strong>Restaurant ID:</strong> {{ review.restaurant_id }}</p>
+                <p><strong>Rating:</strong> {{ review.rating }}/5</p>
+                <p>{{ review.comment }}</p>
+                <small>{{ review.created_at }}</small>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No reviews have been submitted yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('restaurant_list') }}" class="button">Browse Restaurants</a>
+</section>
+{% endblock %}

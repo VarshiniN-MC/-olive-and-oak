@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+
+{% block title %}Olive & Oak | Discover Great Food{% endblock %}
+
+{% block content %}
+
+<div class="hero">
+    <div class="hero-content">
+        <span class="hero-tag">GOOD FOOD. GOOD MOOD.</span>
+        <h1>Find your next favourite meal.</h1>
+        <p>Explore restaurants, discover delicious menus, reserve your table or order food right to your doorstep.</p>
+
+        <div class="hero-actions">
+            <a href="{{ url_for('restaurant_list') }}" class="button">
+                Explore Restaurants →
+            </a>
+            <a href="{{ url_for('reservation') }}" class="button button-secondary">
+                Book a Table
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="promo-banner">
+    <h2>A little treat for your next order!</h2>
+    <p>Use WELCOME10 for 10% off or FLAT50 for ₹50 off on eligible orders.</p>
+</div>
+
+<section>
+    <h2>Choose how you want to enjoy your food</h2>
+    <p class="muted">A dining experience that fits your plans.</p>
+
+    <div class="filter-grid">
+        <div class="service-card">
+            <div class="service-icon">🍽️</div>
+            <h3>Dine-in</h3>
+            <p>Reserve your table and enjoy a meal at the restaurant.</p>
+            <a href="{{ url_for('reservation') }}" class="button">Reserve a Table</a>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🥡</div>
+            <h3>Takeaway / Pickup</h3>
+            <p>Order your favourites and collect them from the outlet.</p>
+            <a href="{{ url_for('restaurant_list') }}" class="button">Order for Pickup</a>
+        </div>
+
+        <div class="service-card">
+            <div class="service-icon">🛵</div>
+            <h3>Home Delivery</h3>
+            <p>Enjoy your favourite meals from the comfort of your home.</p>
+            <a href="{{ url_for('restaurant_list') }}" class="button">Order Delivery</a>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Discover something delicious</h2>
+    <p class="muted">From comforting Indian meals to Italian favourites and quick bites.</p>
+    <a href="{{ url_for('restaurant_list') }}" class="button">Browse All Restaurants →</a>
+</section>
+
+{% endblock %}

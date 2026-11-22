@@ -1,0 +1,245 @@
+
+{% extends "base.html" %}
+
+{% block title %}Restaurants | Olive & Oak{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <p class="eyebrow">A TABLE FOR EVERY TASTE</p>
+    <h1>Discover restaurants</h1>
+    <p class="muted">
+        Explore handpicked dining destinations.
+        Showing our curated collection near {{ session.get('location') or 'Mysuru, Karnataka' }}.
+    </p>
+</div>
+
+<div class="promo-banner">
+    <h2>A little something for your next meal</h2>
+    <p>
+        WELCOME10 – 10% off eligible orders
+        &nbsp; | &nbsp;
+        FLAT50 – ₹50 off eligible orders
+    </p>
+</div>
+
+<details class="filter-panel" open>
+    <summary><strong>⌕ Search, filters and preferences</strong></summary>
+
+    <form method="GET" action="{{ url_for('restaurant_list') }}">
+
+        <div class="filter-grid">
+
+            <div class="filter-field">
+                <label for="search">Search restaurant or dish</label>
+                <input type="text"
+                       id="search"
+                       name="search"
+                       value="{{ filters.get('search', '') }}"
+                       placeholder="Try biryani, pizza, pasta...">
+            </div>
+
+            <div class="filter-field">
+                <label for="cuisine">Cuisine</label>
+                <select name="cuisine" id="cuisine">
+                    <option value="">All cuisines</option>
+                    {% for cuisine in cuisines %}
+                        <option value="{{ cuisine }}"
+                            {% if filters.get('cuisine') == cuisine %}selected{% endif %}>
+                            {{ cuisine }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="restaurant_type">Restaurant type</label>
+                <select name="restaurant_type" id="restaurant_type">
+                    <option value="">All types</option>
+
+                    {% for type in [
+                        'Pure Vegetarian Restaurant',
+                        'Cafe & Restaurant',
+                        'Restaurant',
+                        'Fine Dining Restaurant'
+                    ] %}
+                        <option value="{{ type }}"
+                            {% if filters.get('restaurant_type') == type %}selected{% endif %}>
+                            {{ type }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="min_price">Minimum price (₹)</label>
+                <input type="number"
+                       id="min_price"
+                       name="min_price"
+                       min="0"
+                       value="{{ filters.get('min_price', '') }}"
+                       placeholder="Minimum">
+            </div>
+
+            <div class="filter-field">
+                <label for="max_price">Maximum price (₹)</label>
+                <input type="number"
+                       id="max_price"
+                       name="max_price"
+                       min="0"
+                       value="{{ filters.get('max_price', '') }}"
+                       placeholder="Maximum">
+            </div>
+
+            <div class="filter-field">
+                <label for="rating">Minimum rating</label>
+                <select name="rating" id="rating">
+                    <option value="">Any rating</option>
+
+                    {% for value in [3, 3.5, 4, 4.5] %}
+                        <option value="{{ value }}"
+                            {% if filters.get('rating') == value|string %}selected{% endif %}>
+                            {{ value }} stars and above
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="distance">Maximum distance</label>
+                <select name="distance" id="distance">
+                    <option value="">Any distance</option>
+
+                    {% for value in [2, 5, 10, 15, 25] %}
+                        <option value="{{ value }}"
+                            {% if filters.get('distance') == value|string %}selected{% endif %}>
+                            Within {{ value }} km
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="food_type">Food preference</label>
+                <select name="food_type" id="food_type">
+                    <option value="">Any preference</option>
+                    <option value="Veg"
+                        {% if filters.get('food_type') == 'Veg' %}selected{% endif %}>
+                        Vegetarian
+                    </option>
+                    <option value="Non-Veg"
+                        {% if filters.get('food_type') == 'Non-Veg' %}selected{% endif %}>
+                        Non-Vegetarian
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit">Apply Filters</button>
+
+            <a href="{{ url_for('restaurant_list') }}"
+               class="button button-secondary">
+                Clear Filters
+            </a>
+        </div>
+
+    </form>
+</details>
+
+<div class="restaurant-results-heading">
+    <h2>{{ restaurants|length }} restaurants to explore</h2>
+    <p class="muted">Find a place that suits your taste.</p>
+</div>
+
+{% if restaurants %}
+
+    {% for restaurant in restaurants %}
+
+        <article class="restaurant-card">
+
+            <img class="restaurant-image"
+                 src="{{ restaurant.image }}"
+                 alt="{{ restaurant.name }} restaurant"
+                 loading="lazy"
+                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80';">
+
+            <div class="restaurant-info">
+
+                <h2>{{ restaurant.name }}</h2>
+
+                <p class="restaurant-cuisine">
+                    {{ restaurant.cuisine }}
+                </p>
+
+                <p class="rating">
+                    ★ {{ restaurant.rating_display }} / 5
+                </p>
+
+                <p class="restaurant-price">
+                    ₹{{ restaurant.min_price }} – ₹{{ restaurant.max_price }} per item
+                </p>
+
+                <p class="restaurant-description">
+                    {{ restaurant.description }}
+                </p>
+
+                <p class="restaurant-address">
+                    📍 {{ restaurant.address }}
+                </p>
+
+                {% if restaurant.phone %}
+                    <p class="restaurant-phone">
+                        ☎ {{ restaurant.phone }}
+                    </p>
+                {% endif %}
+
+                <p class="muted">
+                    Approx. {{ restaurant.distance }} km
+                </p>
+
+                <span class="restaurant-type-tag">
+                    {{ restaurant.type }}
+                </span>
+
+            </div>
+
+            <div class="restaurant-actions">
+
+                <a href="{{ url_for('menu', restaurant_id=restaurant.id) }}"
+                   class="button">
+                    View Menu
+                </a>
+
+                <a href="{{ url_for('reservation') }}"
+                   class="button button-secondary">
+                    Book a Table
+                </a>
+
+            </div>
+
+        </article>
+
+    {% endfor %}
+
+    <p class="form-note">
+        Restaurant details are based on the curated project catalogue.
+        Menu items, prices and distances are demonstration data and may not
+        represent current restaurant offerings.
+    </p>
+
+{% else %}
+
+    <section class="empty-state">
+        <h2>No restaurants found</h2>
+        <p>Try changing your filters or searching for another dish.</p>
+
+        <a href="{{ url_for('restaurant_list') }}" class="button">
+            Show All Restaurants
+        </a>
+    </section>
+
+{% endif %}
+
+{% endblock %}

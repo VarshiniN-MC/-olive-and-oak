@@ -1,0 +1,35 @@
+
+{% extends "base.html" %}
+{% block title %}Submit Review{% endblock %}
+{% block content %}
+<section>
+    <h1>Review {{ restaurant.name }}</h1>
+
+    {% if eligible_orders %}
+        <form method="POST">
+            <label>Select completed order</label>
+            <select name="order_id" required>
+                {% for order_id in eligible_orders %}
+                    <option value="{{ order_id }}">{{ order_id }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Star Rating</label>
+            <select name="rating" required>
+                <option value="5">5 - Excellent</option>
+                <option value="4">4 - Very Good</option>
+                <option value="3">3 - Good</option>
+                <option value="2">2 - Fair</option>
+                <option value="1">1 - Poor</option>
+            </select>
+
+            <label>Your Review</label>
+            <textarea name="comment" minlength="3" required></textarea>
+
+            <button type="submit">Submit Review</button>
+        </form>
+    {% else %}
+        <p>You need a completed order from this restaurant that has not already been reviewed.</p>
+    {% endif %}
+</section>
+{% endblock %}

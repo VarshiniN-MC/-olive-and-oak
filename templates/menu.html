@@ -1,0 +1,140 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ restaurant.name }} | Olive & Oak{% endblock %}
+
+{% block content %}
+
+<a href="{{ url_for('restaurant_list') }}" class="text-link">
+    ← Back to restaurants
+</a>
+
+<div class="menu-hero">
+
+    <img src="{{ restaurant.image }}"
+         alt="{{ restaurant.name }}"
+         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=85';">
+
+    <div class="menu-hero-overlay">
+        <span class="hero-tag">{{ restaurant.cuisine }} CUISINE</span>
+
+        <h1>{{ restaurant.name }}</h1>
+
+        <p>
+            {{ restaurant.type }}
+            · ★ {{ rating }} / 5
+        </p>
+
+        <p>{{ restaurant.address }}</p>
+    </div>
+
+</div>
+
+<div class="menu-heading">
+    <p class="eyebrow">MADE FOR GOOD TASTE</p>
+    <h2>Explore the menu</h2>
+    <p class="muted">
+        A selection of dishes from {{ restaurant.name }}.
+    </p>
+    <p class="form-note">
+        Menu items and prices are illustrative demonstration data.
+    </p>
+</div>
+
+<div class="menu-list">
+
+    {% for item in restaurant.menu %}
+
+        <article class="menu-card">
+
+            <div class="menu-item-info">
+
+                <span class="food-tag">
+                    {{ item.food_type }}
+                </span>
+
+                <span class="muted">
+                    {{ item.category }} · {{ item.cuisine }}
+                </span>
+
+                <h3>{{ item.name }}</h3>
+
+                <p>{{ item.description }}</p>
+
+                <strong class="menu-price">
+                    ₹{{ item.price }}
+                </strong>
+
+            </div>
+
+            <form method="POST"
+                  action="{{ url_for('add_to_cart', restaurant_id=restaurant_id, item_index=loop.index0) }}">
+
+                <button type="submit">
+                    + Add
+                </button>
+
+            </form>
+
+        </article>
+
+    {% endfor %}
+
+</div>
+
+<section class="reviews-section">
+
+    <h2>Customer reviews</h2>
+
+    {% if reviews %}
+
+        {% for review in reviews %}
+
+            <div class="review-card">
+
+                <p class="rating">
+                    ★ {{ review.rating }} / 5
+                </p>
+
+                <p>{{ review.comment }}</p>
+
+                <p class="muted">
+                    {{ review.created_at }}
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p class="muted">
+            No customer reviews yet.
+            Be the first to share your experience after ordering.
+        </p>
+
+    {% endif %}
+
+    {% if logged_in %}
+
+        <a href="{{ url_for('submit_review', restaurant_id=restaurant_id) }}"
+           class="button button-secondary">
+            Write a Review
+        </a>
+
+    {% else %}
+
+        <a href="{{ url_for('login') }}"
+           class="button button-secondary">
+            Login to Review
+        </a>
+
+    {% endif %}
+
+</section>
+
+<a href="{{ url_for('view_cart') }}" class="button">
+    View My Cart →
+</a>
+
+{% endblock %}

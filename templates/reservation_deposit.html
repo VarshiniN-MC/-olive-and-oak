@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+{% block title %}Reservation Deposit{% endblock %}
+{% block content %}
+<section>
+    <h1>Reservation Advance Deposit</h1>
+    <p>Reservation: {{ booking.reservation_id }}</p>
+    <p>Restaurant: {{ booking.restaurant_name }}</p>
+    <p>Advance deposit: ₹{{ deposit }}</p>
+    <p>This is a simulated non-refundable advance payment.</p>
+
+    {% if booking.deposit_status == "Paid" %}
+        <p class="success">Deposit already paid.</p>
+    {% else %}
+        <form method="POST">
+            <label>Payment Method</label>
+            <select name="payment_method" required>
+                {% for method in payment_methods %}
+                    <option value="{{ method }}">{{ method }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Pay Advance Deposit</button>
+        </form>
+    {% endif %}
+</section>
+{% endblock %}

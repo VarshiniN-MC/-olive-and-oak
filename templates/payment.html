@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+{% block title %}Payment{% endblock %}
+{% block content %}
+<section>
+    <h1>Payment</h1>
+    <p>Restaurant: {{ restaurant_name }}</p>
+    <p>Service: {{ service_type }}</p>
+    <p>Subtotal: ₹{{ subtotal }}</p>
+    <p>Discount: ₹{{ discount }}</p>
+    <h2>Amount Payable: ₹{{ total }}</h2>
+
+    <p>This is a simulated payment. No real money will be transferred.</p>
+
+    <form method="POST">
+        <label>Select Payment Method</label>
+        <select name="payment_method" required>
+            <option value="">Choose payment method</option>
+            {% for method in payment_methods %}
+                <option value="{{ method }}">{{ method }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Confirm Demo Payment</button>
+    </form>
+
+    <a href="{{ url_for('checkout') }}">Back to Checkout</a>
+</section>
+{% endblock %}

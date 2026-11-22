@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Olive & Oak{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+        <a href="{{ url_for('home') }}" class="brand">
+            <span class="brand-name">Olive & Oak</span>
+            <span class="brand-subtitle">Food & Drinks</span>
+        </a>
+
+        <div class="sidebar-location">
+            <small>YOUR LOCATION</small>
+            <a href="{{ url_for('location') }}" class="location-box">
+                <span>📍</span>
+                {{ session.get('location') or 'Mysuru, Karnataka' }}
+            </a>
+            <a href="{{ url_for('location') }}" class="change-location">
+                Change location →
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <small>EXPLORE</small>
+            <a href="{{ url_for('home') }}" class="side-link">
+                ⌂ <span>Home</span>
+            </a>
+            <a href="{{ url_for('restaurant_list') }}" class="side-link">
+                ☷ <span>Restaurants</span>
+            </a>
+            <a href="{{ url_for('reviews') }}" class="side-link">
+                ☆ <span>Reviews</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <small>YOUR ACTIVITY</small>
+            <a href="{{ url_for('view_cart') }}" class="side-link">
+                🛒 <span>My Cart</span>
+            </a>
+            <a href="{{ url_for('reservation') }}" class="side-link">
+                ▦ <span>Book a Table</span>
+            </a>
+            <a href="{{ url_for('reservation_history') }}" class="side-link">
+                ▤ <span>Bookings</span>
+            </a>
+            <a href="{{ url_for('order_history') }}" class="side-link">
+                ☰ <span>Orders</span>
+            </a>
+            <a href="{{ url_for('transactions') }}" class="side-link">
+                ₹ <span>Transactions</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <small>ACCOUNT</small>
+
+            {% if logged_in %}
+                <a href="{{ url_for('profile') }}" class="side-link">
+                    ♙ <span>My Profile</span>
+                </a>
+
+                <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+                    <button type="submit" class="side-link logout-link">
+                        ↪ <span>Logout</span>
+                    </button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="side-link">
+                    ♙ <span>Login / Sign up</span>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="sidebar-footer">
+            {% if logged_in %}
+                Signed in as {{ customer_name or 'Customer' }}
+            {% else %}
+                Welcome to Olive & Oak.
+                Sign in to order food.
+            {% endif %}
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="mobile-header">
+            <a href="{{ url_for('home') }}" class="brand">
+                <span class="brand-name">Olive & Oak</span>
+            </a>
+
+            <button type="button"
+                    class="mobile-menu-button"
+                    onclick="document.body.classList.toggle('sidebar-open')">
+                ☰
+            </button>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+</div>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% block title %}Reservation History{% endblock %}
+{% block content %}
+<section>
+    <h1>Reservation History</h1>
+
+    {% if reservations %}
+        {% for booking in reservations %}
+            <div class="restaurant-card">
+                <h2>{{ booking.restaurant_name }}</h2>
+                <p>Reservation ID: {{ booking.reservation_id }}</p>
+                <p>Date: {{ booking.reservation_date }}</p>
+                <p>Time: {{ booking.reservation_time }}</p>
+                <p>Guests: {{ booking.guests }}</p>
+                <p>Table: {{ booking.table_id }}</p>
+                <p>Status: {{ booking.status }}</p>
+                <p>Deposit: ₹{{ booking.deposit_amount or 0 }}</p>
+                <p>Deposit Status: {{ booking.deposit_status }}</p>
+
+                {% if booking.deposit_status != "Paid" %}
+                    <a href="{{ url_for('reservation_deposit', reservation_id=booking.reservation_id) }}" class="button">Pay Deposit</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have not made any reservations yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('reservation') }}" class="button">Book a Table</a>
+</section>
+{% endblock %}

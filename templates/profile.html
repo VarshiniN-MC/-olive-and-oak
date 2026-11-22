@@ -1,0 +1,19 @@
+
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<section>
+    <h1>My Profile</h1>
+    <p><strong>Registered contact:</strong> {{ contact }}</p>
+
+    <form method="POST">
+        <label>Name</label>
+        <input type="text" name="name" value="{{ name }}" required>
+
+        <label>Location</label>
+        <input type="text" name="location" value="{{ location }}">
+
+        <button type="submit">Update Profile</button>
+    </form>
+</section>
+{% endblock %}

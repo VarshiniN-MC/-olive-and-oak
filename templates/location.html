@@ -1,0 +1,45 @@
+
+{% extends "base.html" %}
+{% block title %}Manage Location{% endblock %}
+{% block content %}
+<section>
+    <h1>Manage Location</h1>
+    <p>Enter your current location manually or use browser location permission.</p>
+
+    <form method="POST">
+        <label>Location</label>
+        <input type="text" id="location" name="location" value="{{ location }}" placeholder="Enter area, city or address" required>
+        <button type="submit">Save Location</button>
+    </form>
+
+    <button type="button" onclick="detectLocation()">Detect My Location</button>
+    <p id="location-status"></p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function detectLocation() {
+    const status = document.getElementById("location-status");
+
+    if (!navigator.geolocation) {
+        status.textContent = "Geolocation is not supported by this browser.";
+        return;
+    }
+
+    status.textContent = "Requesting location permission...";
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            document.getElementById("location").value =
+                position.coords.latitude + ", " + position.coords.longitude;
+
+            status.textContent = "Location detected. Click Save Location.";
+        },
+        function() {
+            status.textContent = "Location permission denied or unavailable. Enter it manually.";
+        }
+    );
+}
+</script>
+{% endblock %}
